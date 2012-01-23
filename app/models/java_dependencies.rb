@@ -1,0 +1,16 @@
+class JavaDependencies
+  require 'java'
+  #import 'productsvc-dtos-2012.1-SNAPSHOT'
+  import 'screportingutil'
+  import 'javapasswordsdk'
+  import 'log4j-1.2.15'
+  import 'cclogging-2011.7'
+  import 'sc-common-1.3.0-SNAPSHOT'
+  import 'cyberarkutil-2011.10-SNAPSHOT'
+  import 'jackson-jaxrs-1.7.1'
+  import 'commons-logging-1.1.1'
+  import 'servlet-api-2.4'
+  import 'jsp-api-2.0'
+  import 'commons-httpclient-3.1'
+  import 'commons-codec-1.4'
+end

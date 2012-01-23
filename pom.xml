@@ -1,0 +1,319 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>com.constantcontact.apps.screporting</groupId>
+    <artifactId>screporting</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.constantcontact.apps.smm</groupId>
+  <artifactId>screporting-worker</artifactId>
+  <packaging>war</packaging>
+
+  <properties>
+    <projectPath>.</projectPath>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.constantcontact.components</groupId>
+      <artifactId>ccSecurity</artifactId>
+      <version>2012.1-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.constantcontact.apps.smm</groupId>
+      <artifactId>scapi-domain</artifactId>
+      <version>1.3.0-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-jaxrs</artifactId>
+      <version>1.7.1</version>
+    </dependency>
+    <dependency>
+      <!-- jackson mapper is used by spring for mapping JSON to/from 
+                beans -->
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>1.7.1</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-xc</artifactId>
+      <version>1.7.1</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>2.2.3</version>
+      <classifier>jdk15</classifier>
+    </dependency>
+    
+    <dependency>
+      <!-- needed for spring remoting to SOTS -->
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+      <type>jar</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.15</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- Spring framework -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring</artifactId>
+        <version>2.5.6</version>
+    </dependency>   
+    
+    <dependency>
+      <groupId>com.constantcontact.components</groupId>
+      <artifactId>cyberarkutil</artifactId>
+      <version>2011.10-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.constantcontact.apps.sots</groupId>
+      <artifactId>sots-client</artifactId>
+      <version>2011.7</version>
+      <exclusions>
+        <exclusion>
+          <groupId>mockit</groupId>
+          <artifactId>jmockit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.constantcontact.apps.smm</groupId>
+      <artifactId>sc-common</artifactId>
+      <version>1.3.0-SNAPSHOT</version>
+    </dependency>
+        
+    <dependency>
+      <groupId>com.constantcontact.components</groupId>
+      <artifactId>cclogging</artifactId>
+      <version>2011.7</version>
+    </dependency>
+    
+     <dependency>
+      <groupId>com.constantcontact.productsvc</groupId>
+      <artifactId>productsvc-rest</artifactId>
+      <version>2012.1-SNAPSHOT</version>
+    </dependency>
+    
+    
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundle</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <tasks>
+                <exec dir="${projectPath}" executable="jruby">
+                  <arg value="-S"></arg>
+                  <arg value="bundle"></arg>
+                  <arg value="install"></arg>
+                </exec>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>warble</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <exec dir="${projectPath}" executable="jruby">
+                  <arg value="-S"></arg>
+                  <arg value="bundle"></arg>
+                  <arg value="exec"></arg>
+                  <arg value="warble"></arg>
+                  <arg value="war"></arg>
+                </exec>
+                <move file="${projectPath}/${project.artifactId}.war" tofile="target/${project.artifactId}-${project.version}.war"></move>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy dependencies</id>
+          <goals>
+            <goal>copy</goal>
+          </goals>
+           <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.constantcontact.components</groupId>
+                  <artifactId>ccSecurity</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>ccSecurity.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>com.constantcontact.apps.smm</groupId>
+                  <artifactId>scapi-domain</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>scapi-domain.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>org.codehaus.jackson</groupId>
+                  <artifactId>jackson-jaxrs</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>jackson-jaxrs.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>org.codehaus.jackson</groupId>
+                  <artifactId>jackson-mapper-asl</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>jackson-mapper-asl.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>org.codehaus.jackson</groupId>
+                  <artifactId>jackson-xc</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>jackson-xc.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>net.sf.json-lib</groupId>
+                  <artifactId>json-lib</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>json-lib.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>commons-httpclient</groupId>
+                  <artifactId>commons-httpclient</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>commons-httpclient.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>log4j</groupId>
+                  <artifactId>log4j</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>log4j.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>spring.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>com.constantcontact.components</groupId>
+                  <artifactId>cyberarkutil</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>cyberarkutil.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>com.constantcontact.apps.sots</groupId>
+                  <artifactId>sots-client</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>sots-client.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>com.constantcontact.apps.smm</groupId>
+                  <artifactId>sc-common</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>sc-common.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>com.constantcontact.components</groupId>
+                  <artifactId>cclogging</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>cclogging.jar</destFileName>
+                </artifactItem>
+                
+                <artifactItem>
+                  <groupId>com.constantcontact.productsvc</groupId>
+                  <artifactId>productsvc-rest</artifactId>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${basedir}/lib</outputDirectory>
+                  <destFileName>productsvc-rest.jar</destFileName>
+                </artifactItem>
+                
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+ <profiles>
+    <profile>
+      <id>rpm</id>
+      <activation>
+        <property>
+          <name>rpm</name>
+          <value>true</value>
+        </property>
+      </activation>
+ </profile>
+</profiles>
+
+</project>
+

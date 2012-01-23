@@ -1,0 +1,27 @@
+class X
+
+	def self.run
+	
+		count = 0
+
+
+		client = OnStomp::Client.new('stomp://localhost:61613')
+
+		client.connect
+		client.subscribe('/queue/cc.sc.reporting.in.q', :ack => 'client') do |m|
+		  client.ack m
+		  count += 1
+		  puts "Thread ID: #{thread_id}"
+		  puts "Subscription count: #{count}"
+		  puts "\nJob created: #{m.body}"
+		  #Job.new.execute
+		end
+
+		while true
+		end
+	
+	end
+
+end
+
+
