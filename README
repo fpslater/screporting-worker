@@ -1,15 +1,12 @@
 Hi.
 
 This is a Rails app that wraps Java in a bunch of places, hence is has a lot of Java dependencies. 
-So, it's pretty pointless that this app is written in Rails? I agree, but it wasn't my decision at the 
-time. 
+So, it's pretty pointless that this app is written in Rails? I agree, but it wasn't my decision at the time. 
 
 What does it do? It's a worker app that pulls some information off a queue and does some stuff with that information.
 
-The bulk of the code is in the model section. There are good examples of subscribing to ActiveMQ, Ruby threading,
-and talking to the Facebook Graph API: 
+The bulk of the code is in the model section. There are good examples of subscribing to ActiveMQ, Ruby threading, and talking to the Facebook Graph API: 
 
-The "driver.rb" class drives the app. This is where I create threads that subscribe to ActiveMQ, pull
-from the queue, and process the information.
+The "driver.rb" class drives the app. This is where I create threads that subscribe to ActiveMQ, pull from the queue, and process the information.
 
 The "fb_util.rb" class has an example of talking to the Facebook Graph API. It utilizes the Koala gem.  
